@@ -33,7 +33,7 @@ def fill_login_credentials(driver):
         driver.save_screenshot("error_login_fill.png")
 
 def add_webhook_node(driver, method="GET"):
-    print("🚀 Configuring Webhook node (simplified)...")
+    print("🚀 Configuring Webhook node...")
     wait = WebDriverWait(driver, 20)
 
     try:
@@ -55,14 +55,18 @@ def add_webhook_node(driver, method="GET"):
         print("❌ Failed to configure Webhook node:", e)
         driver.save_screenshot("webhook_node_error.png")
 
-def add_agent_ai_node(driver):
-    print("🚀 Adding Agent AI node...")
+def add_node(driver, node_name):
+    """Adds a new node to the canvas by pressing TAB and then searching."""
+    print(f"🚀 Adding '{node_name}' node...")
     wait = WebDriverWait(driver, 20)
     try:
-        # After clicking the plus button, the search input is focused.
-        actions = ActionChains(driver)
-        actions.send_keys("AI Agent").pause(1).send_keys(Keys.ENTER).perform()
-        print("✅ AI Agent node added via search.")
+        # Press TAB to focus the search input on the existing node
+        ActionChains(driver).send_keys(Keys.TAB).perform()
+        time.sleep(1)
+
+        # Type the node name and press Enter
+        ActionChains(driver).send_keys(node_name).pause(1).send_keys(Keys.ENTER).perform()
+        print(f"✅ '{node_name}' node added via search.")
         time.sleep(3)
 
         # === Back to Canvas ===
@@ -72,8 +76,61 @@ def add_agent_ai_node(driver):
         print("🔙 Returned to canvas.")
 
     except Exception as e:
-        print("❌ Failed to add Agent AI node:", e)
-        driver.save_screenshot("agent_ai_node_error.png")
+        print(f"❌ Failed to add '{node_name}' node:", e)
+        driver.save_screenshot(f"{node_name.lower().replace(' ', '_')}_node_error.png")
+
+def add_brave_search_node(driver):
+    """Adds the Brave Search node with a double enter."""
+    print("🚀 Adding 'Brave Search' node...")
+    wait = WebDriverWait(driver, 20)
+    try:
+        # Press TAB to focus the search input on the existing node
+        ActionChains(driver).send_keys(Keys.TAB).perform()
+        time.sleep(1)
+
+        # Type the node name and press Enter twice
+        ActionChains(driver).send_keys("Brave Search").pause(1).send_keys(Keys.ENTER).pause(1).send_keys(Keys.ENTER).perform()
+        print("✅ 'Brave Search' node added via search.")
+        time.sleep(3)
+
+        # === Back to Canvas ===
+        print("Attempting to return to canvas...")
+        back_btn = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[data-test-id='back-to-canvas']")))
+        driver.execute_script("arguments[0].click();", back_btn)
+        print("🔙 Returned to canvas.")
+
+    except Exception as e:
+        print("❌ Failed to add 'Brave Search' node:", e)
+        driver.save_screenshot("brave_search_node_error.png")
+
+def add_google_sheets_node(driver):
+    """Adds a Google Sheets node and selects an action within it."""
+    print("🚀 Adding 'Google Sheets' node...")
+    wait = WebDriverWait(driver, 20)
+    try:
+        # Press TAB to focus the search input on the existing node
+        ActionChains(driver).send_keys(Keys.TAB).perform()
+        time.sleep(1)
+
+        # Type the node name and press Enter
+        ActionChains(driver).send_keys("Google Sheets").pause(1).send_keys(Keys.ENTER).perform()
+        print("✅ 'Google Sheets' node added via search.")
+        time.sleep(3)
+
+        # The internal search is already focused. Type the action and press Enter.
+        ActionChains(driver).send_keys("Append row in sheet").pause(1).send_keys(Keys.ENTER).perform()
+        print("✅ Selected 'Append row in sheet' action.")
+        time.sleep(3)
+
+        # === Back to Canvas ===
+        print("Attempting to return to canvas...")
+        back_btn = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[data-test-id='back-to-canvas']")))
+        driver.execute_script("arguments[0].click();", back_btn)
+        print("🔙 Returned to canvas.")
+
+    except Exception as e:
+        print("❌ Failed to add 'Google Sheets' node:", e)
+        driver.save_screenshot("google_sheets_node_error.png")
 
 
 def wait_for_plus_and_click(driver):
@@ -84,7 +141,7 @@ def wait_for_plus_and_click(driver):
         add_button = driver.find_element(By.CSS_SELECTOR, "button[data-test-id='canvas-plus-button']")
         driver.execute_script("arguments[0].click();", add_button)
         print("✅ '+' button clicked.")
-        time.sleep(2) # Increased pause
+        time.sleep(2)
     except Exception as e:
         print("❌ '+' button failed:", e)
         driver.save_screenshot("error_plus_button.png")
@@ -110,10 +167,11 @@ def main():
         open_n8n_workflow(driver)
         fill_login_credentials(driver)
         wait_for_plus_and_click(driver)
-        #search_and_add_webhook(driver)
-        #add_webhook_node(driver, method="POST") # Simplified call
-        #wait_for_plus_and_click(driver)
-        add_agent_ai_node(driver)
+        search_and_add_webhook(driver)
+        add_webhook_node(driver, method="POST")
+        add_brave_search_node(driver)
+        add_node(driver, "AI Agent")
+        add_google_sheets_node(driver)
         print("⏳ Waiting for 5 seconds to observe the result...")
         time.sleep(5)
     finally:
