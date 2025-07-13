@@ -55,29 +55,68 @@ def add_webhook_node(driver, method="GET"):
         print("❌ Failed to configure Webhook node:", e)
         driver.save_screenshot("webhook_node_error.png")
 
-def add_node(driver, node_name):
-    """Adds a new node to the canvas by pressing TAB and then searching."""
-    print(f"🚀 Adding '{node_name}' node...")
+def add_and_configure_ai_agent_node(driver):
+    """Adds and configures the AI Agent node with Chat Model and Memory."""
+    print("🚀 Adding and configuring 'AI Agent' node...")
     wait = WebDriverWait(driver, 20)
-    try:
-        # Press TAB to focus the search input on the existing node
-        ActionChains(driver).send_keys(Keys.TAB).perform()
-        time.sleep(1)
 
-        # Type the node name and press Enter
-        ActionChains(driver).send_keys(node_name).pause(1).send_keys(Keys.ENTER).perform()
-        print(f"✅ '{node_name}' node added via search.")
+    try:
+        # Step 1: Add AI Agent node
+        ActionChains(driver).send_keys(Keys.TAB).pause(1).send_keys("AI Agent").pause(1).send_keys(Keys.ENTER).perform()
+        print("✅ 'AI Agent' node added.")
         time.sleep(3)
 
-        # === Back to Canvas ===
-        print("Attempting to return to canvas...")
-        back_btn = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[data-test-id='back-to-canvas']")))
+        # Step 2: Press Enter to open configuration
+        ActionChains(driver).send_keys(Keys.ENTER).perform()
+        time.sleep(2)
+
+        # Step 3: Click '+' for Chat Model
+        chat_plus_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-test-id='add-subnode-ai_languageModel-0']")))
+        chat_plus_btn.click()
+        print("➕ Clicked '+' for Chat Model.")
+        time.sleep(1)
+
+        # Step 4: Type "OpenAI Chat" and press Enter
+        ActionChains(driver).send_keys("OpenAI Chat").pause(1).send_keys(Keys.ENTER).perform()
+        print("✅ Selected 'OpenAI Chat'.")
+        time.sleep(1)
+
+        # Step 5: Back to canvas
+        back_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div[data-test-id='back-to-canvas']")))
         driver.execute_script("arguments[0].click();", back_btn)
-        print("🔙 Returned to canvas.")
+        print("🔙 Back from Chat Model.")
+        time.sleep(1)
+
+        # Step 6: Right arrow → Enter (go to Memory)
+        ActionChains(driver).send_keys(Keys.ARROW_RIGHT).pause(0.5).send_keys(Keys.ENTER).perform()
+        print("➡️ Entered Memory section.")
+        time.sleep(1.5)
+
+        # Step 7: Click '+' for Memory
+        memory_plus_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-test-id='add-subnode-ai_memory-0']")))
+        memory_plus_btn.click()
+        print("➕ Clicked '+' for Memory.")
+        time.sleep(1)
+
+        # Step 8: Down arrow → Enter
+        ActionChains(driver).send_keys(Keys.ARROW_DOWN).pause(0.5).send_keys(Keys.ENTER).perform()
+        print("✅ Selected default memory.")
+        time.sleep(1)
+
+        # Step 9: Back to canvas again
+        back_btn2 = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div[data-test-id='back-to-canvas']")))
+        driver.execute_script("arguments[0].click();", back_btn2)
+        print("🔙 Back from Memory.")
+        time.sleep(1)
+
+        # Step 10: Final right arrow to close
+        ActionChains(driver).send_keys(Keys.ARROW_RIGHT).perform()
+        print("✅ Final step complete. AI Agent node configured.")
 
     except Exception as e:
-        print(f"❌ Failed to add '{node_name}' node:", e)
-        driver.save_screenshot(f"{node_name.lower().replace(' ', '_')}_node_error.png")
+        print(f"❌ Failed to configure 'AI Agent' node: {e}")
+        driver.save_screenshot("ai_agent_config_error.png")
+
 
 def add_brave_search_node(driver):
     """Adds the Brave Search node with a double enter."""
@@ -170,7 +209,7 @@ def main():
         search_and_add_webhook(driver)
         add_webhook_node(driver, method="POST")
         add_brave_search_node(driver)
-        add_node(driver, "AI Agent")
+        add_and_configure_ai_agent_node(driver)
         add_google_sheets_node(driver)
         print("⏳ Waiting for 5 seconds to observe the result...")
         time.sleep(5)
