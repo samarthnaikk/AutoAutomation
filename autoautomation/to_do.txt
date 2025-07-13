@@ -1,0 +1,50 @@
+Aim:
+Create a working automation workflow on the n8n website based on the task described in a single text file.
+
+Input:
+A text file named project.txt containing a natural language description of the automation task
+
+Output:
+A complete and functional n8n workflow created directly on the n8n website GUI. This includes nodes, configurations, connections, and all necessary settings.
+
+Process:
+
+Interpret Task:
+Read the contents of project.txt and understand the user's automation requirements. Break the task into modular steps such as input, processing, and output.
+Design Workflow Logic:
+Determine:
+Which n8n nodes are required (e.g., Webhook, Set, HTTP Request, Function, Google Sheets)
+How these nodes should be connected
+The sequence of actions and any required conditions, loops, or waits
+Execute on n8n Website:
+Open the n8n editor (cloud or self-hosted instance) and simulate the following:
+Click to create a new workflow
+Add and configure each node based on the logic
+Set node parameters and field values
+Connect nodes to define data flow
+Configure credentials or prompt the user if authentication is required
+Implement pagination, loops, or conditional paths if specified
+Save the final workflow
+Finalize:
+Ensure the workflow is functional and reflects all steps in the task description. Validate the setup and save it on the platform.
+Use safari instead, I have signed in there - https://samarthnaik.app.n8n.cloud/workflow/new?projectId=24sqPJwfo6bt66lv
+
+Creds:
+
+username inspect details - input#el-id-6983-4.el-input__inner
+Role: textbox
+302px x 40px
+
+password inspect details - input#el-id-6983-5.el-input_inner
+Role: textbox
+302px x 40px
+
+submit button inspect details - button.button._button_186j6_351._primary_186j6_611._larg
+Role: button Flex Item Flex
+87px × 40px
+
+Constraints:
+
+All steps must be performed through the n8n website UI by simulating user actions (no CLI or API).
+Assume the user is logged into n8n and credentials are pre-configured if needed.
+Do not prompt for unnecessary confirmations or messages. Focus on completing the flow as described.
