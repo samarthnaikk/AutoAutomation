@@ -55,6 +55,26 @@ def add_webhook_node(driver, method="GET"):
         print("❌ Failed to configure Webhook node:", e)
         driver.save_screenshot("webhook_node_error.png")
 
+def add_agent_ai_node(driver):
+    print("🚀 Adding Agent AI node...")
+    wait = WebDriverWait(driver, 20)
+    try:
+        # After clicking the plus button, the search input is focused.
+        actions = ActionChains(driver)
+        actions.send_keys("AI Agent").pause(1).send_keys(Keys.ENTER).perform()
+        print("✅ AI Agent node added via search.")
+        time.sleep(3)
+
+        # === Back to Canvas ===
+        print("Attempting to return to canvas...")
+        back_btn = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[data-test-id='back-to-canvas']")))
+        driver.execute_script("arguments[0].click();", back_btn)
+        print("🔙 Returned to canvas.")
+
+    except Exception as e:
+        print("❌ Failed to add Agent AI node:", e)
+        driver.save_screenshot("agent_ai_node_error.png")
+
 
 def wait_for_plus_and_click(driver):
     try:
@@ -90,8 +110,10 @@ def main():
         open_n8n_workflow(driver)
         fill_login_credentials(driver)
         wait_for_plus_and_click(driver)
-        search_and_add_webhook(driver)
-        add_webhook_node(driver, method="POST") # Simplified call
+        #search_and_add_webhook(driver)
+        #add_webhook_node(driver, method="POST") # Simplified call
+        #wait_for_plus_and_click(driver)
+        add_agent_ai_node(driver)
         print("⏳ Waiting for 5 seconds to observe the result...")
         time.sleep(5)
     finally:
